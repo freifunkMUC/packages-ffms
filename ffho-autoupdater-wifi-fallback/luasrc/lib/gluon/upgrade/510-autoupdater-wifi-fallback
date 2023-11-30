@@ -38,8 +38,11 @@ local file = io.open('/usr/lib/micron.d/autoupdater', 'r')
 local content = file:read "*a"
 local minute = tonumber(content:match('^([0-9][0-9]?)%s'))
 file:close()
-minute = (minute + 10) % 60
+minute = (minute + 10) % 15
 
 local f = io.open('/usr/lib/micron.d/autoupdater-wifi-fallback', 'w')
-f:write(string.format('%i * * * * /usr/sbin/autoupdater-wifi-fallback\n', minute))
+for _ = 1, 4 do -- we want to run it every 15 minutes
+  f:write(string.format('%i * * * * /usr/sbin/autoupdater-wifi-fallback\n', minute))
+  minute = minute + 15
+end
 f:close()
